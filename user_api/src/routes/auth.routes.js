@@ -1,10 +1,12 @@
 // register route 
 import express from "express";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken"; 
 import prisma from "../lib/prisma.js";
 
 const router = express.Router();
 
+// register api 
 router.post("/register", async(req, res) => {
     try{ 
         const {name, email, password} = req.body;
@@ -57,6 +59,70 @@ router.post("/register", async(req, res) => {
 
         res.status(500).json({
             message: "something went wrong"
+        })
+    }
+})
+
+// Login api 
+router.post("/login", async(req,res)=>{
+    try{
+        const { email, password } = req.body;
+
+        // 1. check if both feilds are entered 
+        if(!email || !password) {
+            return res.status(400).json({
+                message: "Email and password are required"
+            })
+        }
+
+        // 2. Find user
+        const user = await prisma.user.findUnique({
+            where: {
+                email:email
+            }
+        })
+
+        // 3. check user
+        if(!user) {
+            return res.status(401).json({
+                message: "Invalid email or password"
+            })
+        }
+
+        // 4. check password
+        const isPasswordCorrect = await bcrypt.compare(
+            password,
+            user.password
+        );
+        if(!isPasswordCorrect){
+            return res.status(401).json({
+                message: "Password is incorrect"
+            })
+        }
+
+        // 6. generate jwt
+        const token = jwt.sign(
+            {
+            usrerId : user.id,
+            role : user.role
+            },
+            process.env.JWT_SECRET,
+            {
+                expiresIn: process.env.JWT_EXPIRES_IN
+            }
+        )
+
+        // 7. SEND RESPONSE
+        res.status(201).json({
+            message: "Login Successful",
+            token: token
+        })
+    }
+    catch(error){
+        console.log(error);
+
+        res.status(500).json({
+            message: "Something went wrong"
         })
     }
 })
