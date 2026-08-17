@@ -1,7 +1,7 @@
 // register route 
 import express from "express";
 import bcrypt from "bcrypt";
-import prisma from "../lib/prisma";
+import prisma from "../lib/prisma.js";
 
 const router = express.Router();
 
@@ -34,7 +34,7 @@ router.post("/register", async(req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         // 4. create user
-        const user = await prima.user.create({
+        const user = await prisma.user.create({
             data: {name:name, 
             email:email, 
             password:hashedPassword
@@ -61,4 +61,4 @@ router.post("/register", async(req, res) => {
     }
 })
 
-module.exports = router;
+export default router;
