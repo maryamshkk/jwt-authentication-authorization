@@ -73,8 +73,6 @@ user_api/
 | GET    | `/api/admin/users/:id` | JWT + ADMIN |
 | DELETE | `/api/admin/users/:id` | JWT + ADMIN |
 
-The planned endpoints and authentication requirements follow the project's original roadmap.
-
 ## 🔐 Authentication Flow
 
 ```text
@@ -131,8 +129,8 @@ Users can access their own protected APIs, while administrators can manage users
 * [x] Prisma User model
 * [x] bcrypt password hashing
 * [x] Registration API
-* [ ] Login API
-* [ ] JWT generation
+* [x] Login API
+* [x] JWT generation
 * [ ] JWT authentication middleware
 * [ ] Protected routes
 * [ ] Role-based authorization
@@ -144,10 +142,10 @@ Users can access their own protected APIs, while administrators can manage users
 
 ## 🚀 Current Status
 
-**Registration API completed.**
+**Registration API and Login API with JWT token generation completed.**
 
 ### Next Step
 
-`POST /api/auth/login` → `bcrypt.compare()` → `jwt.sign()`
+`JWT Authentication Middleware` → `jwt.verify()` → `Protected Routes`
 
-This is the next stage of the project roadmap.
+The next stage is to verify JWT tokens from the `Authorization: Bearer <token>` header and attach the authenticated user to `req.user`.
